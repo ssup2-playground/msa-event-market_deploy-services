@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: auth=ssup2ket/service-auth
+    argocd-image-updater.argoproj.io/auth.update-strategy: latest
+    argocd-image-updater.argoproj.io/auth.allow-tags: regexp:^commit-*
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+  name: dev-service-auth
+  namespace: cicd
+spec:
+  destination:
+    namespace: app-dev
+    server: https://kubernetes.default.svc
+  project: ssup2ket
+  source:
+    kustomize:
+      images:
+      - ssup2ket/auth-service:2dfc87a25c
+    path: auth-service/overlays/dev
+    repoURL: https://github.com/ssup2ket/deploy-services.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated: {}
